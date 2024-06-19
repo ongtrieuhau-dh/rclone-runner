@@ -14,7 +14,7 @@ jobs:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
           RUN_ID: ${{ github.event.inputs.run_id }}
         run: |
-          curl -X DELETE \
+          curl -s -X DELETE \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token $PAT_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/actions/runs/$RUN_ID/logs" \

@@ -49,7 +49,7 @@ jobs:
 
       - name: Trigger cleanup job
         run: |
-          curl -X POST \
+          curl -s -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
             "https://api.github.com/repos/${{ github.repository }}/actions/workflows/delete_logs.yml/dispatches" \
