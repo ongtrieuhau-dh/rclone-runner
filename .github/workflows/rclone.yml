@@ -25,10 +25,7 @@ jobs:
           RCLONE_CONFIG_BASE64: ${{ github.event.inputs.rclone_config_base64 }}
         run: |
           mkdir -p ~/.config/rclone
-          # Using a file to avoid logging sensitive data
-          echo "${RCLONE_CONFIG_BASE64}" > rclone_config_base64.txt
-          base64 --decode rclone_config_base64.txt > ~/.config/rclone/rclone.conf
-          rm -f rclone_config_base64.txt
+          echo "${RCLONE_CONFIG_BASE64}" | base64 --decode > ~/.config/rclone/rclone.conf
 
       - name: Process rclone command
         id: process_command
@@ -50,16 +47,15 @@ jobs:
           rm -f ~/.config/rclone/rclone.conf
         shell: bash
 
-      - name: Delete logs of Decode and configure rclone step
+      - name: Delete all workflow logs
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           run_id=${{ github.run_id }}
-          job_id=${{ github.job }}
-          step_name="Decode and configure rclone"
-          logs_url="https://api.github.com/repos/${{ github.repository }}/actions/runs/${run_id}/jobs"
-          job_logs=$(curl -s -H "Authorization: token $GITHUB_TOKEN" $logs_url)
-          step_logs_url=$(echo $job_logs | jq -r ".jobs[] | select(.name == \"$job_id\") | .steps[] | select(.name == \"$step_name\") | .logs_url")
-          curl -X DELETE -H "Authorization: token $GITHUB_TOKEN" $step_logs_url
+          repo=${{ github.repository }}
+          curl -X DELETE \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/$repo/actions/runs/$run_id/logs"
         shell: bash
