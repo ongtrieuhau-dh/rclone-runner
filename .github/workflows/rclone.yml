@@ -53,5 +53,5 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
             "https://api.github.com/repos/${{ github.repository }}/actions/workflows/delete_logs.yml/dispatches" \
-            -d '{"ref":"main"}'
+            -d '{"ref":"main","inputs":{"run_id":"${{ github.run_id }}"}}'
         shell: bash
