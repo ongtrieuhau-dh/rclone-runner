@@ -50,12 +50,12 @@ jobs:
       - name: Delete all workflow logs
         if: always()
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           run_id=${{ github.run_id }}
           repo=${{ github.repository }}
           curl -X DELETE \
             -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Authorization: token $PAT_TOKEN" \
             "https://api.github.com/repos/$repo/actions/runs/$run_id/logs"
         shell: bash
