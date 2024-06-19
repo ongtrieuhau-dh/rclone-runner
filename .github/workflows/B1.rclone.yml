@@ -1,5 +1,4 @@
-name: Run rclone
-
+name: B1RunClone
 on:
   workflow_dispatch:
     inputs:
@@ -11,9 +10,8 @@ on:
         required: true
 
 jobs:
-  rclone:
+  B1RunClone:
     runs-on: ubuntu-latest
-
     steps:
       - name: Setup rclone
         run: |

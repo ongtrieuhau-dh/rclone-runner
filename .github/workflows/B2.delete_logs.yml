@@ -1,4 +1,4 @@
-name: Delete logs
+name: B2CleanLog
 on:
   workflow_dispatch:
     inputs:
@@ -6,7 +6,7 @@ on:
         description: "Run Id to delete log"
         required: true
 jobs:
-  delete_logs:
+  B2CleanLog:
     runs-on: ubuntu-latest
     steps:
       - name: Delete all workflow logs
