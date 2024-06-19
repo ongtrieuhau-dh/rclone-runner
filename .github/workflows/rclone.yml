@@ -50,7 +50,7 @@ jobs:
           rm -f ~/.config/rclone/rclone.conf
         shell: bash
 
-      - name: Delete Decode and configure rclone logs
+      - name: Delete logs of Decode and configure rclone step
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -60,6 +60,6 @@ jobs:
           step_name="Decode and configure rclone"
           logs_url="https://api.github.com/repos/${{ github.repository }}/actions/runs/${run_id}/jobs"
           job_logs=$(curl -s -H "Authorization: token $GITHUB_TOKEN" $logs_url)
-          step_logs_url=$(echo $job_logs | jq -r ".[] | select(.name == \"$job_id\") | .steps[] | select(.name == \"$step_name\") | .logs_url")
+          step_logs_url=$(echo $job_logs | jq -r ".jobs[] | select(.name == \"$job_id\") | .steps[] | select(.name == \"$step_name\") | .logs_url")
           curl -X DELETE -H "Authorization: token $GITHUB_TOKEN" $step_logs_url
         shell: bash
