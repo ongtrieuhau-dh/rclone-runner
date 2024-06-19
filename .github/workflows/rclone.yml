@@ -1,0 +1,34 @@
+name: Run rclone
+
+on:
+  workflow_dispatch:
+    inputs:
+      rclone_config_base64:
+        description: "Rclone config content in base64"
+        required: true
+      rclone_command:
+        description: "Rclone command to run"
+        required: true
+
+jobs:
+  rclone:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup rclone
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rclone
+
+      - name: Decode and configure rclone
+        run: |
+          mkdir -p ~/.config/rclone
+          echo "${{ github.event.inputs.rclone_config_base64 }}" | base64 --decode > ~/.config/rclone/rclone.conf
+
+      - name: Run rclone command
+        run: |
+          rclone ${{ github.event.inputs.rclone_command }}
+
+      - name: Clean up rclone config
+        run: |
+          rm -f ~/.config/rclone/rclone.conf
