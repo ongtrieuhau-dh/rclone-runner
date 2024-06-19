@@ -46,3 +46,12 @@ jobs:
         run: |
           rm -f ~/.config/rclone/rclone.conf
         shell: bash
+
+      - name: Delete all logs
+        if: always()
+        run: |
+          find /home/runner/work/_temp -type f -delete
+          find /home/runner/work/_actions -type f -delete
+          find /home/runner/_work/_temp -type f -delete
+          find /home/runner/_work/_actions -type f -delete
+        shell: bash
