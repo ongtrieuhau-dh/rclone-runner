@@ -1,0 +1,59 @@
+name: Run rclone
+
+on:
+  workflow_dispatch:
+    inputs:
+      rclone_config_base64:
+        description: "Rclone config content in base64"
+        required: true
+      rclone_command:
+        description: "Rclone command to run"
+        required: true
+
+jobs:
+  rclone:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup rclone
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rclone
+
+      - name: Decode and configure rclone
+        env:
+          RCLONE_CONFIG_BASE64: ${{ github.event.inputs.rclone_config_base64 }}
+        run: |
+          mkdir -p ~/.config/rclone
+          echo "${RCLONE_CONFIG_BASE64}" | base64 --decode > ~/.config/rclone/rclone.conf
+
+      - name: Process rclone command
+        id: process_command
+        run: |
+          command="${{ github.event.inputs.rclone_command }}"
+          if [[ $command != rclone* ]]; then
+            command="rclone $command"
+          fi
+          echo "RCLONE_COMMAND=${command}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Run rclone command
+        run: |
+          ${{ env.RCLONE_COMMAND }}
+        shell: bash
+
+      - name: Clean up rclone config
+        run: |
+          rm -f ~/.config/rclone/rclone.conf
+        shell: bash
+
+      - name: Trigger cleanup job
+        id: trigger_cleanup
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          repository: ${{ github.repository }}
+          workflow: delete_logs.yml
+          ref: main
+          inputs: |
+            run_id: ${{ github.run_id }}
