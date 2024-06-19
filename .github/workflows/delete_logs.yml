@@ -17,6 +17,5 @@ jobs:
           curl -s -X DELETE \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token $PAT_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/actions/runs/$RUN_ID/logs" \
-            | jq .
+            "https://api.github.com/repos/${{ github.repository }}/actions/runs/$RUN_ID/logs" | jq .
         shell: bash
