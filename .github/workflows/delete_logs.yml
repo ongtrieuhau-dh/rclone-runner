@@ -7,6 +7,10 @@ jobs:
   delete_logs:
     runs-on: ubuntu-latest
     steps:
+      - name: Wait for workflow to complete
+        run: |
+          echo "Waiting for the main job to complete..."
+          sleep 60
       - name: Delete all workflow logs
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
